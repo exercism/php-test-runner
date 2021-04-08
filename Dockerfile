@@ -16,11 +16,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
 # Create appuser
 RUN useradd -ms /bin/bash appuser
 
-# Get exercism's tooling_webserver
-RUN curl -L -o /usr/local/bin/tooling_webserver \
-  https://github.com/exercism/tooling-webserver/releases/download/0.10.0/tooling_webserver && \
-  chmod +x /usr/local/bin/tooling_webserver
-
 WORKDIR /opt/test-runner
 COPY . .
 
