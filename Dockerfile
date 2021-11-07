@@ -1,8 +1,16 @@
-FROM php:8.0.2-cli-buster
+FROM php:8.0.12-cli-bullseye
 
 # Install SSL ca certificates
 RUN apt-get update && \
   apt-get install curl bash -y
+
+# Use the default production configuration
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+  install-php-extensions intl
 
 # Install Node
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
