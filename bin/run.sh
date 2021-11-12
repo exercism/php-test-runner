@@ -17,6 +17,7 @@ function main {
     --log-junit "${output_dir%/}/${XML_RESULTS}" \
     --verbose \
     --no-configuration \
+    --do-not-cache-result \
     "${test_files%%*( )}"
   set -e
 
