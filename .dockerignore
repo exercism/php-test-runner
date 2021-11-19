@@ -19,3 +19,4 @@ junit-to-json/**/*.js
 .appends
 .gitattributes
 .dockerignore
+Dockerfile
