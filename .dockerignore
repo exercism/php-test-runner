@@ -16,3 +16,4 @@ test/
 
 junit-to-json/node_modules/
 junit-to-json/**/*.js
+.appends
