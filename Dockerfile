@@ -2,7 +2,7 @@ FROM php:8.0.12-cli-bullseye
 
 # Install SSL ca certificates
 RUN apt-get update && \
-  apt-get install curl bash -y
+  apt-get install curl bash jo -y
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"

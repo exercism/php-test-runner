@@ -13,13 +13,19 @@ function main {
   test_files=$(find "${solution_dir}" -type f -name '*Test.php' | tr '\n' ' ')
 
   set +e
-  eval "${PHPUNIT_BIN}" \
+  phpunit_output=$(eval "${PHPUNIT_BIN}" \
     --log-junit "${output_dir%/}/${XML_RESULTS}" \
     --verbose \
     --no-configuration \
     --do-not-cache-result \
-    "${test_files%%*( )}"
+    "${test_files%%*( )}" 2>&1)
+  phpunit_exit_code=$?
   set -e
+
+  if [ "${phpunit_exit_code}" -eq 255 ]; then
+    jo version=2 status=error message="${phpunit_output}" tests="[]" > "${output_dir%/}/${JSON_RESULTS}"
+    return 0;
+  fi
 
   node junit-to-json/dist/index.js \
     "${output_dir%/}/${XML_RESULTS}" \
@@ -54,7 +60,7 @@ elif [ ! -d "${3}" ]; then
   die "Exercise test output directory does not exist"
 fi
 
-deps=("${PHPUNIT_BIN}" node tr)
+deps=("${PHPUNIT_BIN}" node tr jo)
 for dep in "${deps[@]}"; do
   installed "${dep}" || die "Missing '${dep}'"
 done
