@@ -35,6 +35,11 @@ jobs:
           cd junit-to-json
           npm install
 
+      - name: Install Other Deps
+        shell: bash
+        run: |
+          apt-get install -y jo
+
       - name: Smoke Test
         run: |
           ./bin/run.sh hello-world ./test/hello-world ./test
