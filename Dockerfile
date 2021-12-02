@@ -1,4 +1,4 @@
-FROM php:8.0.12-cli-bullseye
+FROM php:8.1.0-cli-bullseye
 
 # Install SSL ca certificates
 RUN apt-get update && \
