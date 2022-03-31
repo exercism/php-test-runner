@@ -247,6 +247,21 @@ describe('processXmlResult', () => {
     expect(result.status).toEqual('fail')
     expect(result.tests).toHaveLength(2)
   })
+
+  test('parses empty output as an error', () => {
+    // If the student puts exit or die calls in their code, then PHPUnit will
+    // exit without producing any output in the output.xml file.
+    const xml = ``
+
+    const xmlBuffer = Buffer.from(xml)
+    const result = processXmlResult(xmlBuffer)
+
+    expect(result).not.toBeNull()
+    expect(result.version).toBe(2)
+    expect(result.status).toEqual('error')
+    expect(result.tests).toHaveLength(0)
+    expect(result.message).toBe('Unit test run did not produce any results. Did the tests die?')
+  })
 })
 
 function fullXmlExample() {

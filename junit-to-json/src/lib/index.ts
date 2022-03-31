@@ -1,4 +1,4 @@
-import { load } from 'cheerio'
+import {load} from 'cheerio'
 
 type CheerioRoot = ReturnType<typeof load>
 type CheerioSelection = ReturnType<CheerioRoot>
@@ -10,8 +10,17 @@ function isTestCases(
 }
 
 export function processXmlResult(xmlContent: Buffer): ExercismTestRunnerResult {
-  const $ = load(xmlContent, { xmlMode: true })
+  const $ = load(xmlContent, {xmlMode: true})
   const parsed = parseTestSuites($)
+
+  if (parsed.length === 0) {
+    return {
+      version: 2,
+      tests: [],
+      status: "error",
+      message: "Unit test run did not produce any results. Did the tests die?"
+    } as ExercismTestRunnerError
+  }
 
   return {
     version: 2,
@@ -24,7 +33,7 @@ export function processXmlResult(xmlContent: Buffer): ExercismTestRunnerResult {
         ? 'fail'
         : status
     }, 'pass'),
-  }
+  };
 }
 
 export function parseTestSuites($: CheerioRoot): TestSuite[] {
