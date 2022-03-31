@@ -18,8 +18,8 @@ export function processXmlResult(xmlContent: Buffer): ExercismTestRunnerResult {
       version: 2,
       tests: [],
       status: "error",
-      message: "Unit test run did not produce any results. Did the tests finish completely?\n\nUsing the `die` " +
-        "function in your code will cause the test run to not produce any output."
+      message: "Test run did not produce any output. Check your code to see if the code exits unexpectedly before " +
+        "the report is generated.\n\nE.g. Using the `die` function will cause the test runner to exit unexpectedly."
     } as ExercismTestRunnerError
   }
 
