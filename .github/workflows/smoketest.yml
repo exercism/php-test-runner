@@ -29,10 +29,9 @@ jobs:
           composer validate --strict
 
       - name: "Determine composer cache directory"
-        id: "determine-composer-cache-directory"
         run: |
           cd junit-handler
-          echo "composer_cache_directory=$(composer config cache-dir)" >> "$GUTHUB_ENV"
+          echo "composer_cache_directory=$(composer config cache-dir)" >> "$GITHUB_ENV"
 
       - name: "Cache dependencies installed with composer"
         uses: "actions/cache@v2.0.0"
