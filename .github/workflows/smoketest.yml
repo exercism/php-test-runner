@@ -1,0 +1,55 @@
+name: Smoke Test
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version:
+          - "8.2"
+
+    steps:
+      - uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f
+
+      - name: "Install PHP with extensions"
+        uses: "shivammathur/setup-php@2.3.2"
+        with:
+          coverage: "none"
+          extensions: "${{ env.PHP_EXTENSIONS }}"
+          php-version: "${{ matrix.php-version }}"
+
+      - name: "Validate composer.json and composer.lock"
+        run: |
+          cd junit-handler
+          composer validate --strict
+
+      - name: "Determine composer cache directory"
+        id: "determine-composer-cache-directory"
+        run: |
+          cd junit-handler
+          echo "::set-output name=directory::$(composer config cache-dir)"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2.0.0"
+        with:
+          path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
+          key: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-"
+
+      - name: "Install locked dependencies from composer.lock"
+        run: composer install --no-interaction --no-progress --no-suggest
+
+      - name: Install PHPUnit
+        run: |
+          curl -Lo ./bin/phpunit-9.phar https://phar.phpunit.de/phpunit-9.phar
+          chmod +x bin/phpunit-9.phar
+
+      - name: Install Other Deps
+        run: apt-get install -y jo
+
+      - name: Perform test run
+        run: ./bin/run.sh hello-world ./test/hello-world ./test
+
+      - name: Verify result
+        run: ./.github/bin/check_files.sh
