@@ -30,12 +30,12 @@ jobs:
         id: "determine-composer-cache-directory"
         run: |
           cd junit-handler
-          echo "::set-output name=directory::$(composer config cache-dir)"
+          echo "composer_cache_directory=$(composer config cache-dir)" >> "$GUTHUB_ENV"
 
       - name: "Cache dependencies installed with composer"
         uses: "actions/cache@v2.0.0"
         with:
-          path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
+          path: "${{ env.composer_cache_directory }}"
           key: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
           restore-keys: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-"
 
