@@ -15,11 +15,13 @@ jobs:
       - uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f
 
       - name: "Install PHP with extensions"
-        uses: "shivammathur/setup-php@2.3.2"
+        uses: "shivammathur/setup-php@2.25.4"
         with:
           coverage: "none"
           extensions: "${{ env.PHP_EXTENSIONS }}"
           php-version: "${{ matrix.php-version }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Validate composer.json and composer.lock"
         run: |
