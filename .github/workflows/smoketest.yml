@@ -51,7 +51,7 @@ jobs:
           chmod +x bin/phpunit-9.phar
 
       - name: Install Other Deps
-        run: apt-get install -y jo
+        run: sudo apt-get install -y jo
 
       - name: Perform test run
         run: ./bin/run.sh hello-world ./test/hello-world ./test
