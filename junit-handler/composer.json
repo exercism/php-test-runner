@@ -2,7 +2,7 @@
     "name": "exercism/junit-handler",
     "description": "Translate J-Unit XML to Exercism v3 test-runner JSON",
     "type": "project",
-    "license": "AGPL-3.0",
+    "license": "AGPL-3.0-or-later",
     "autoload": {
         "psr-4": {
             "Exercism\\JunitHandler\\": "src/"
