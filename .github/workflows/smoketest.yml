@@ -41,7 +41,9 @@ jobs:
           restore-keys: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-"
 
       - name: "Install locked dependencies from composer.lock"
-        run: composer install --no-interaction --no-progress --no-suggest
+        run: |
+          cd junit-handler
+          composer install --no-interaction --no-progress
 
       - name: Install PHPUnit
         run: |
