@@ -28,7 +28,7 @@ function main {
     return 0;
   fi
 
-  node junit-to-json/dist/index.js \
+  php junit-handler/run.php \
     "${output_dir%/}/${XML_RESULTS}" \
     "${output_dir%/}/${JSON_RESULTS}"
 }
@@ -61,7 +61,7 @@ elif [ ! -d "${3}" ]; then
   die "Exercise test output directory does not exist"
 fi
 
-deps=("${PHPUNIT_BIN}" node tr jo)
+deps=("${PHPUNIT_BIN}" tr jo php)
 for dep in "${deps[@]}"; do
   installed "${dep}" || die "Missing '${dep}'"
 done

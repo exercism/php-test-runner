@@ -4,6 +4,8 @@ declare (strict_types = 1);
 
 function reverseString(string $text): string
 {
+    echo $text;
+
     $encoding = mb_detect_encoding($text);
     $length = mb_strlen($text, $encoding);
     $reversed = '';

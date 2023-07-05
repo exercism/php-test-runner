@@ -1,0 +1,21 @@
+{
+    "name": "exercism/junit-handler",
+    "description": "Translate J-Unit XML to Exercism v3 test-runner JSON",
+    "type": "project",
+    "license": "AGPL-3.0",
+    "autoload": {
+        "psr-4": {
+            "Exercism\\JunitHandler\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Tim Austin",
+            "email": "tim@neenjaw.com"
+        }
+    ],
+    "require": {
+        "phpowermove/docblock": "^4.0",
+        "phpunit/phpunit": "^10"
+    }
+}
