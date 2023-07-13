@@ -2,7 +2,7 @@ FROM php:8.2.7-cli-bookworm
 
 # Install SSL ca certificates
 RUN apt-get update && \
-  apt-get install curl bash jo git -y 
+  apt-get install curl bash jo git -y zip unzip
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
