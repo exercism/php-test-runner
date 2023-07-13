@@ -10,12 +10,11 @@ RUN apt-get update && \
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-
-RUN chmod +x /usr/local/bin/install-php-extensions && \
+RUN curl -Lo /usr/local/bin/install-php-extensions https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions && \
+  curl -Lo /usr/local/bin/composer https://getcomposer.org/download/2.5.8/composer.phar && \
+  chmod +x /usr/local/bin/install-php-extensions && \
+  chmod +x /usr/local/bin/composer && \
   install-php-extensions ds-1.4.0 intl
-
-COPY --from=composer:2.5.8 /usr/bin/composer /usr/local/bin/composer
 
 # Create appuser
 RUN useradd -ms /bin/bash appuser
