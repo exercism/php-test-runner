@@ -22,9 +22,37 @@
  * To disable strict typing, comment out the directive below.
  */
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
-function distance(string $strandA, string $strandB): int
+class LeapTest extends PHPUnit\Framework\TestCase
 {
-    return count(array_diff(str_split($strandA), str_split($strandB)));
+    public static function setUpBeforeClass(): void
+    {
+        require_once 'Leap.php';
+    }
+
+    public function testLeapYear(): void
+    {
+        $this->assertTrue(isLeap(1996));
+    }
+
+    public function testNonLeapYear(): void
+    {
+        $this->assertFalse(isLeap(1997));
+    }
+
+    public function testNonLeapEvenYear(): void
+    {
+        $this->assertFalse(isLeap(1998));
+    }
+
+    public function testCentury(): void
+    {
+        $this->assertFalse(isLeap(1900));
+    }
+
+    public function testFourthCentury(): void
+    {
+        $this->assertTrue(isLeap(2400));
+    }
 }

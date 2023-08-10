@@ -3,58 +3,27 @@ name: Smoke Test
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  build_and_test:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php-version:
-          - "8.2"
-
+  test:
+    name: Tests
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f
+      - name: Checkout code
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
 
-      - name: "Install PHP with extensions"
-        uses: "shivammathur/setup-php@2.25.4"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@2a1a44ac4aa01993040736bd95bb470da1a38365
         with:
-          coverage: "none"
-          extensions: "${{ env.PHP_EXTENSIONS }}"
-          php-version: "${{ matrix.php-version }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          install: true
 
-      - name: "Validate composer.json and composer.lock"
-        run: |
-          cd junit-handler
-          composer validate --strict
-
-      - name: "Determine composer cache directory"
-        run: |
-          cd junit-handler
-          echo "composer_cache_directory=$(composer config cache-dir)" >> "$GITHUB_ENV"
-
-      - name: "Cache dependencies installed with composer"
-        uses: "actions/cache@v2.0.0"
+      - name: Build Docker image and store in cache
+        uses: docker/build-push-action@2eb1c1961a95fc15694676618e422e8ba1d63825
         with:
-          path: "${{ env.composer_cache_directory }}"
-          key: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
-          restore-keys: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-"
+          context: .
+          push: false
+          load: true
+          tags: exercism/php-test-runner
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: "Install locked dependencies from composer.lock"
-        run: |
-          cd junit-handler
-          composer install --no-interaction --no-progress
-
-      - name: Install PHPUnit
-        run: |
-          curl -Lo ./bin/phpunit-9.phar https://phar.phpunit.de/phpunit-9.phar
-          chmod +x bin/phpunit-9.phar
-
-      - name: Install Other Deps
-        run: sudo apt-get install -y jo
-
-      - name: Perform test run
-        run: ./bin/run.sh hello-world ./test/hello-world ./test
-
-      - name: Verify result
-        run: ./.github/bin/check_files.sh
+      - name: Run Tests in Docker
+        run: bin/run-tests-in-docker.sh
