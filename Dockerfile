@@ -19,20 +19,18 @@ COPY --from=composer:2.5.8 /usr/bin/composer /usr/local/bin/composer
 
 # Create appuser
 RUN useradd -ms /bin/bash appuser
+USER appuser
 
 # Install PHPUnit
 WORKDIR /opt/test-runner/bin
 RUN curl -Lo phpunit-9.phar https://phar.phpunit.de/phpunit-9.phar && \
   chmod +x phpunit-9.phar
 
-WORKDIR /opt/test-runner
-COPY . .
-
-# Install the deps for test-reflector
-WORKDIR /opt/test-runner/junit-handler
+WORKDIR /opt/test-runner/junit-handler/
+COPY junit-handler/ .
 RUN composer install --no-interaction 
 
 WORKDIR /opt/test-runner
-USER appuser
+COPY . .
 
 ENTRYPOINT ["/opt/test-runner/bin/run.sh"]
