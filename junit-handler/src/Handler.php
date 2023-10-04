@@ -2,10 +2,10 @@
 
 namespace Exercism\JunitHandler;
 
+use phpowermove\docblock\Docblock;
 use ReflectionClass;
 use ReflectionMethod;
 use SimpleXMLElement;
-use phpowermove\docblock\Docblock;
 
 class Handler
 {
@@ -44,19 +44,19 @@ class Handler
 
         $test_file_source = explode("\n", file_get_contents($test_file_path));
         $reflection_test_class =
-            $this->getReflectionTestClass($test_class, $test_file_path);
+        $this->getReflectionTestClass($test_class, $test_file_path);
 
         $output = [
             'version' => self::VERSION,
             'status' => ($testcase_error_count !== 0 || $testcase_failure_count !== 0)
-                ? self::STATUS_FAIL
-                : self::STATUS_PASS,
+            ? self::STATUS_FAIL
+            : self::STATUS_PASS,
             'tests' =>
-            $this->parseTestCases(
+            $this->parseTestSuite(
                 $testsuite,
                 $reflection_test_class,
                 $test_file_source
-            )
+            ),
         ];
 
         $this->write_json($json_path, $output);
@@ -65,7 +65,7 @@ class Handler
     /**
      * @param string[] $test_file_source
      */
-    private function parseTestCases(
+    private function parseTestSuite(
         SimpleXMLElement $testsuite,
         ReflectionClass $test_class,
         array $test_file_source
@@ -76,11 +76,67 @@ class Handler
         }
 
         $testcase_outputs = [];
+        $nested_testsuites = $testsuite->testsuite;
+        foreach ($nested_testsuites as $nested_testsuite) {
+            $testcase_outputs[] = $this->parseNestedTestSuite(
+                testsuite: $nested_testsuite,
+                test_class: $test_class,
+                test_file_source: $test_file_source,
+                test_methods_by_name: $testcase_methods_by_name
+            );
+        }
+
+        $testcase_outputs[] = $this->parseTestCases(
+            testsuite: $testsuite,
+            test_class: $test_class,
+            test_file_source: $test_file_source,
+            test_methods_by_name: $testcase_methods_by_name
+        );
+
+        return array_merge(...$testcase_outputs);
+    }
+
+    /**
+     * @param string[] $test_file_source
+     * @param array<string, ReflectionMethod> $test_methods_by_name
+     */
+    private function parseNestedTestSuite(
+        SimpleXMLElement $testsuite,
+        ReflectionClass $test_class,
+        array $test_file_source,
+        array $test_methods_by_name,
+    ): array {
+        $attrs = $testsuite->attributes();
+        $name = (string) $attrs['name'];
+        $test_method_name =
+            ltrim(substr($name, (int) strpos($name, "::")), "::");
+
+        return $this->parseTestCases(
+            testsuite: $testsuite,
+            test_class: $test_class,
+            test_file_source: $test_file_source,
+            test_methods_by_name: $test_methods_by_name,
+            supplied_method_name: $test_method_name,
+        );
+    }
+
+    /**
+     * @param string[] $test_file_source
+     * @param array<string, ReflectionMethod> $test_methods_by_name
+     */
+    private function parseTestCases(
+        SimpleXMLElement $testsuite,
+        ReflectionClass $test_class,
+        array $test_file_source,
+        array $test_methods_by_name,
+        ?string $supplied_method_name = null
+    ): array {
+        $testcase_outputs = [];
         foreach ($testsuite->testcase as $testcase) {
             $attrs = $testcase->attributes();
             $name = (string) $attrs['name'];
             /** @var ReflectionMethod $method */
-            $method = $testcase_methods_by_name[$name];
+            $method = $test_methods_by_name[$supplied_method_name ?? $name];
             $docblock = new Docblock($method->getDocComment());
 
             $output = [
@@ -89,7 +145,7 @@ class Handler
                 'test_code' => $this->getTestCaseSource(
                     method: $method,
                     test_source: $test_file_source
-                )
+                ),
             ];
 
             $task_id_tags = $docblock->getTags('task_id')->toArray();
@@ -135,7 +191,7 @@ class Handler
         string $test_class,
         string $test_file_path
     ): ReflectionClass {
-        require_once($test_file_path);
+        require_once $test_file_path;
         $class = new ReflectionClass($test_class);
         return $class;
     }
@@ -152,15 +208,18 @@ class Handler
             strict: true
         );
         $test_lines = $has_lines
-            ? array_slice(
-                $test_source,
-                $source_start_line + 1,
-                $source_end_line - 2 - $source_start_line
-            )
-            : ['Unable to obtain test code.'];
+        ? array_slice(
+            $test_source,
+            $source_start_line + 1,
+            $source_end_line - 2 - $source_start_line
+        )
+        : ['Unable to obtain test code.'];
 
         $min_indent = PHP_INT_MAX;
         foreach ($test_lines as $line) {
+            if (empty($line)) {
+                continue;
+            }
             $indent = strlen($line) - strlen(ltrim($line));
             if ($indent < $min_indent) {
                 $min_indent = $indent;
@@ -171,6 +230,6 @@ class Handler
             $test_lines[$idx] = substr($line, $min_indent);
         }
 
-        return implode("\n", $test_lines)."\n";
+        return implode("\n", $test_lines) . "\n";
     }
 }

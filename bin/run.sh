@@ -23,7 +23,7 @@ function main {
   phpunit_exit_code=$?
   set -e
 
-  if [ "${phpunit_exit_code}" -eq 255 ]; then
+  if [[ "${phpunit_exit_code}" -eq 255 ]]; then
     jo version=2 status=error message="${phpunit_output}" tests="[]" > "${output_dir%/}/${JSON_RESULTS}"
     return 0;
   fi
@@ -51,13 +51,13 @@ fi
 
 if [[ -z "${2:-}" ]]; then
   die "Missing exercise solution directory path"
-elif [ ! -d "${2}" ]; then
+elif [[ ! -d "${2}" ]]; then
   die "Exercise solution directory does not exist"
 fi
 
 if [[ -z "${3:-}" ]]; then
   die "Missing exercise test output path"
-elif [ ! -d "${3}" ]; then
+elif [[ ! -d "${3}" ]]; then
   die "Exercise test output directory does not exist"
 fi
 
