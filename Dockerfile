@@ -1,7 +1,7 @@
 FROM php:8.2.7-cli-alpine3.18 AS build
 
 RUN apk update && \
-  apk add --no-cache ca-certificates curl jo zip unzip
+  apk add --no-cache ca-certificates bash curl jo zip unzip
 
 WORKDIR /usr/local/bin
 
@@ -15,7 +15,7 @@ RUN curl -L -o phpunit-9.phar https://phar.phpunit.de/phpunit-9.phar && \
 WORKDIR /usr/local/bin/junit-handler/
 COPY --from=composer:2.5.8 /usr/bin/composer /usr/local/bin/composer
 COPY junit-handler/ .
-RUN composer install --no-interaction 
+RUN composer install --no-interaction
 
 FROM php:8.2.7-cli-alpine3.18 AS runtime
 

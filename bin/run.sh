@@ -23,6 +23,9 @@ function main {
   phpunit_exit_code=$?
   set -e
 
+  echo ">>>>>>> TESTING: ${solution_dir}"
+  echo ">>>>>>> EXIT CODE: ${phpunit_exit_code}"
+
   if [[ "${phpunit_exit_code}" -eq 255 ]]; then
     jo version=2 status=error message="${phpunit_output}" tests="[]" > "${output_dir%/}/${JSON_RESULTS}"
     return 0;

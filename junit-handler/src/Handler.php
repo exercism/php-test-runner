@@ -48,9 +48,7 @@ class Handler
 
         $output = [
             'version' => self::VERSION,
-            'status' => ($testcase_error_count !== 0 || $testcase_failure_count !== 0)
-            ? self::STATUS_FAIL
-            : self::STATUS_PASS,
+            'status' => $this->getStatus($testcase_error_count, $testcase_failure_count),
             'tests' =>
             $this->parseTestSuite(
                 $testsuite,
@@ -231,5 +229,20 @@ class Handler
         }
 
         return implode("\n", $test_lines) . "\n";
+    }
+
+    private function getStatus(
+        int $testcase_error_count,
+        int $testcase_failure_count
+    ): string {
+        if ($testcase_error_count > 0) {
+            return self::STATUS_ERROR;
+        }
+
+        if ($testcase_failure_count > 0) {
+            return self::STATUS_FAIL;
+        }
+
+        return self::STATUS_PASS;
     }
 }
