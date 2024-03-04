@@ -5,6 +5,7 @@ set -euo pipefail
 PHPUNIT_BIN="./bin/phpunit-10.phar"
 XML_RESULTS='results.xml'
 JSON_RESULTS='results.json'
+XDEBUG_MODE='off'
 
 function main {
   exercise_slug="${1}"
