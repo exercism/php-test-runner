@@ -1,5 +1,6 @@
 # Ignore PHPUnit bin download and run cache artifact
 bin/phpunit-9.phar
+bin/phpunit-10.phar
 .phpunit*.cache
 
 # Ignore run artifacts

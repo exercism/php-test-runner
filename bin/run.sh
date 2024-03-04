@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-PHPUNIT_BIN="./bin/phpunit-9.phar"
+PHPUNIT_BIN="./bin/phpunit-10.phar"
 XML_RESULTS='results.xml'
 JSON_RESULTS='results.json'
 
