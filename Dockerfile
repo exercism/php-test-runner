@@ -7,7 +7,7 @@ WORKDIR /usr/local/bin
 
 RUN curl -L -o install-php-extensions https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions && \
   chmod +x install-php-extensions && \
-  install-php-extensions ds-1.4.0 intl
+  install-php-extensions ds-1.5.0 intl
 
 RUN curl -L -o phpunit-10.phar https://phar.phpunit.de/phpunit-10.phar && \
   chmod +x phpunit-10.phar
