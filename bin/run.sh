@@ -17,7 +17,6 @@ function main {
   phpunit_output=$(eval "${PHPUNIT_BIN}" \
     -d memory_limit=300M \
     --log-junit "${output_dir%/}/${XML_RESULTS}" \
-    --verbose \
     --no-configuration \
     --do-not-cache-result \
     "${test_files%%*( )}" 2>&1)
