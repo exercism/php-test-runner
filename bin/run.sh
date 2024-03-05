@@ -2,9 +2,10 @@
 
 set -euo pipefail
 
-PHPUNIT_BIN="./bin/phpunit-9.phar"
+PHPUNIT_BIN="./bin/phpunit-10.phar"
 XML_RESULTS='results.xml'
 JSON_RESULTS='results.json'
+XDEBUG_MODE='off'
 
 function main {
   exercise_slug="${1}"
@@ -16,7 +17,6 @@ function main {
   phpunit_output=$(eval "${PHPUNIT_BIN}" \
     -d memory_limit=300M \
     --log-junit "${output_dir%/}/${XML_RESULTS}" \
-    --verbose \
     --no-configuration \
     --do-not-cache-result \
     "${test_files%%*( )}" 2>&1)
