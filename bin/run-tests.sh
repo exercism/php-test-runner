@@ -1,7 +1,7 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Synopsis:
-# Test the test runner by running it against a predefined set of solutions 
+# Test the test runner by running it against a predefined set of solutions
 # with an expected output.
 
 # Output:
@@ -10,6 +10,15 @@
 
 # Example:
 # ./bin/run-tests.sh
+
+specific_test=$1
+
+function installed {
+  cmd=$(command -v "${1}")
+
+  [[ -n "${cmd}" ]] && [[ -f "${cmd}" ]]
+  return ${?}
+}
 
 exit_code=0
 
@@ -21,12 +30,16 @@ for test_dir in tests/*; do
     results_file_path="${output_dir_path}/results.json"
     expected_results_file_path="${test_dir_path}/expected_results.json"
 
+    if [ -n "${specific_test}" ] && [ "${specific_test}" != "${test_dir_name}" ]; then
+        continue
+    fi
+
     mkdir -p "${output_dir_path}"
 
     bin/run.sh "${test_dir_name}" "${test_dir_path}" "${output_dir_path}"
 
     # OPTIONAL: Normalize the results file
-    # If the results.json file contains information that changes between 
+    # If the results.json file contains information that changes between
     # different test runs (e.g. timing information or paths), you should normalize
     # the results file to allow the diff comparison below to work as expected
     # sed -i -E \
@@ -35,7 +48,11 @@ for test_dir in tests/*; do
     #   "${results_file_path}"
 
     echo "${test_dir_name}: comparing results.json to expected_results.json"
-    diff "${results_file_path}" "${expected_results_file_path}"
+    if installed "jq"; then
+        diff <(jq -S . "${results_file_path}") <(jq -S . "${expected_results_file_path}")
+    else
+        diff "${results_file_path}" "${expected_results_file_path}"
+    fi
 
     if [ $? -ne 0 ]; then
         exit_code=1
