@@ -26,7 +26,6 @@ docker run \
     --mount type=bind,src="${PWD}/tests",dst=/opt/test-runner/tests \
     --mount type=tmpfs,dst=/tmp \
     --volume "${PWD}/bin/run-tests.sh:/opt/test-runner/bin/run-tests.sh" \
-    --volume "${PWD}/bin/run.sh:/opt/test-runner/bin/run.sh" \
     --workdir /opt/test-runner \
     --entrypoint /opt/test-runner/bin/run-tests.sh \
     exercism/php-test-runner
