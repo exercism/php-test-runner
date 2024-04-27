@@ -1,0 +1,1 @@
+{"version":3,"status":"pass","tests":[{"name":"testHelloWorld","status":"pass","test_code":"$this->assertEquals('Hello, World!', helloWorld());\n","output":"Some 'user \u00fc\u00e2`|| output\ncontaining \\ various \"problematic\" and UTF-8 chars\nobject(stdClass)#79 (0) {\n}\n"}]}

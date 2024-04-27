@@ -16,7 +16,7 @@
 set -e
 
 # Build the Docker image
-docker build --rm -t exercism/php-test-runner .
+# docker build --rm -t exercism/php-test-runner .
 
 # Run the Docker image using the settings mimicking the production environment
 docker run \
@@ -26,6 +26,8 @@ docker run \
     --mount type=bind,src="${PWD}/tests",dst=/opt/test-runner/tests \
     --mount type=tmpfs,dst=/tmp \
     --volume "${PWD}/bin/run-tests.sh:/opt/test-runner/bin/run-tests.sh" \
+    --volume "${PWD}/bin/run.sh:/opt/test-runner/bin/run.sh" \
+    --volume "${PWD}/junit-handler:/opt/test-runner/junit-handler" \
     --workdir /opt/test-runner \
     --entrypoint /opt/test-runner/bin/run-tests.sh \
     exercism/php-test-runner

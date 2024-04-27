@@ -3,8 +3,9 @@
 set -euo pipefail
 
 PHPUNIT_BIN="./bin/phpunit-10.phar"
-XML_RESULTS='results.xml'
-JSON_RESULTS='results.json'
+JUNIT_RESULTS='results.xml'
+TEAMCITY_RESULTS='teamcity.txt'
+EXERCISM_RESULTS='results.json'
 # shellcheck disable=SC2034 # Modifies XDebug behaviour when invoking PHP
 XDEBUG_MODE='off'
 
@@ -20,15 +21,22 @@ function main {
 
   set +e
   if ! output=$(php -l "${solution_dir}"/*.php 2>&1 1>/dev/null); then
-    jo version=3 status=error message="${output/"$solution_dir/"/""}" tests="[]" > "${output_dir%/}/${JSON_RESULTS}"
+    jo version=3 status=error message="${output/"$solution_dir/"/""}" tests="[]" > "${output_dir%/}/${EXERCISM_RESULTS}"
     return 0;
   fi
 
-  output=$(eval "${PHPUNIT_BIN}" \
+  # JUnit results contain the unit test failures only. But they contain `@testdox` - readable test names.
+  # Teamcity results contain user output in addition to failures as "failed risky tests"
+  #   (command line arguments --disallow-test-output and --fail-on-risky).
+  # At the moment we require both logs to provide all information to the website.
+  output=$("${PHPUNIT_BIN}" \
     -d memory_limit=300M \
-    --log-junit "${output_dir%/}/${XML_RESULTS}" \
+    --log-junit "${output_dir%/}/${JUNIT_RESULTS}" \
+    --log-teamcity "${output_dir%/}/${TEAMCITY_RESULTS}" \
     --no-configuration \
     --do-not-cache-result \
+    --disallow-test-output \
+    --fail-on-risky \
     "${test_files%%*( )}" 2>&1)
   phpunit_exit_code=$?
   set -e
@@ -37,13 +45,14 @@ function main {
   # PHPUnit fails to catch some issue in its internals. It cannot be provoked
   # by us for testing our code
   if [[ "${phpunit_exit_code}" -eq 255 ]]; then
-    jo version=3 status=error message="${output/"$solution_dir/"/""}" tests="[]" > "${output_dir%/}/${JSON_RESULTS}"
+    jo version=3 status=error message="${output/"$solution_dir/"/""}" tests="[]" > "${output_dir%/}/${EXERCISM_RESULTS}"
     return 0;
   fi
 
   php junit-handler/run.php \
-    "${output_dir%/}/${XML_RESULTS}" \
-    "${output_dir%/}/${JSON_RESULTS}"
+    "${output_dir%/}/${EXERCISM_RESULTS}" \
+    "${output_dir%/}/${JUNIT_RESULTS}" \
+    "${output_dir%/}/${TEAMCITY_RESULTS}"
 }
 
 function installed {

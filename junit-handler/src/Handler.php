@@ -15,11 +15,16 @@ class Handler
     private const STATUS_PASS = 'pass';
     private const STATUS_FAIL = 'fail';
     private string $test_file_path = '';
+    private ?TeamcityResult $teamcityResult = null;
 
-    public function run(string $xml_path, $json_path): void
-    {
+    public function run(
+        string $json_path,
+        string $xml_path,
+        string $teamcity_path,
+    ): void {
         $testsuites = simplexml_load_file($xml_path);
-        if ($testsuites === false) {
+        $this->teamcityResult = new TeamcityResult($teamcity_path);
+        if ($testsuites === false || !$this->teamcityResult->hasResults()) {
             $output = [
                 'version' => self::VERSION,
                 'tests' => [],
@@ -27,7 +32,7 @@ class Handler
                 'message' => <<<ERROR_MESSAGE
                     Test run did not produce any output. Check your code to see if the code exits unexpectedly before the report is generated.
 
-                    E.g. Using the `die` function will cause the test runner to exist unexpectedly.
+                    E.g. Using the `die` function will cause the test runner to exit unexpectedly.
                     ERROR_MESSAGE
             ];
             $this->write_json($json_path, $output);
@@ -41,7 +46,6 @@ class Handler
         $test_file_path = $testsuite_attrs['file'];
         $test_file_name = \basename($test_file_path);
         $this->test_file_path = \str_replace($test_file_name, '', $test_file_path);
-
 
         $testcase_error_count = (int) $testsuite_attrs['errors'];
         $testcase_failure_count = (int) $testsuite_attrs['failures'];
@@ -164,10 +168,13 @@ class Handler
                 $output['name'] = $testdox->getDescription();
             }
 
+            $testName = $method->getName();
+            if ($this->teamcityResult->hasOutputOf($testName)) {
+                $output['output'] = $this->teamcityResult->outputOf($testName);
+            }
+
             foreach ($testcase->children() ?? [] as $name => $data) {
-                if ($name === 'system-out') {
-                    $output['output'] = (string) $data;
-                } elseif ($name === 'error') {
+                if ($name === 'error') {
                     $output['status'] = self::STATUS_ERROR;
                     $output['message'] = \str_replace($this->test_file_path, '', (string) $data);
                 } elseif ($name === 'failure') {
