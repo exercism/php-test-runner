@@ -2,7 +2,7 @@
 
 function helloWorld()
 {
-    echo "Some 'user üâ`|| output" . PHP_EOL
+    echo "Some 'user üâ`|| \r\toutput\n"
         . 'containing \\ various "problematic" and UTF-8 chars' . PHP_EOL;
     var_dump(new stdClass());
 

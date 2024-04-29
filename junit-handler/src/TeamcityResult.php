@@ -87,8 +87,8 @@ final class TeamcityResult
     private function unescape(string $text): string
     {
         return \str_replace(
-            [ "|'", '|n', '||', ],
-            [ "'",  "\n", '|', ],
+            [ "|'", '|n', '|r', '||', ],
+            [ "'",  "\n", "\r", '|', ],
             $text,
         );
     }
