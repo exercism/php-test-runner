@@ -87,8 +87,10 @@ final class TeamcityResult
     private function unescape(string $text): string
     {
         return \str_replace(
-            [ "|'", '|n', '|r', '||', ],
-            [ "'",  "\n", "\r", '|', ],
+            // Keep this in sync with PHPUnit Teamcity escape()
+            // https://github.com/sebastianbergmann/phpunit/blob/main/src/Logging/TeamCity/TeamCityLogger.php#L331
+            ['||', "|'", '|n', '|r', '|]', '|['],
+            ['|', "'", "\n", "\r", ']', '['],
             $text,
         );
     }
