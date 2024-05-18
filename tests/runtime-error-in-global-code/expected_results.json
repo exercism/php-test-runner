@@ -1,0 +1,1 @@
+{"version":3,"status":"error","message":"\n\nThere was 1 error:\n\n1) HelloWorldTest\nTypeError: helloWorld(): Argument #1 ($value) must be of type int, string given, called in HelloWorld.php on line 11\n\nHelloWorld.php:5\nHelloWorld.php:11\nHelloWorldTest.php:9\n\nERRORS!\nTests: 1, Assertions: 0, Errors: 1.","tests":[]}

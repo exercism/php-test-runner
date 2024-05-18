@@ -49,6 +49,15 @@ function main {
     return 0;
   fi
 
+  # This catches runtime errors in "global student code" (during `require_once`)
+  if [[ "${phpunit_exit_code}" -eq 2 ]]; then
+    if ! grep -q '<testcase' "${output_dir%/}/${JUNIT_RESULTS}"; then
+        output="${output#*" MB"}"
+        jo version=3 status=error message="${output//"$solution_dir/"/""}" tests="[]" > "${output_dir%/}/${EXERCISM_RESULTS}"
+        return 0;
+    fi
+  fi
+
   php junit-handler/run.php \
     "${output_dir%/}/${EXERCISM_RESULTS}" \
     "${output_dir%/}/${JUNIT_RESULTS}" \
