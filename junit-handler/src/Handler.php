@@ -168,9 +168,8 @@ class Handler
                 $output['name'] = $testdox->getDescription();
             }
 
-            $testName = $method->getName();
-            if ($this->teamcityResult->hasOutputOf($testName)) {
-                $output['output'] = $this->teamcityResult->outputOf($testName);
+            if ($this->teamcityResult->hasOutputOf($name)) {
+                $output['output'] = $this->teamcityResult->outputOf($name);
             }
 
             foreach ($testcase->children() ?? [] as $name => $data) {
