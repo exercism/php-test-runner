@@ -17,6 +17,8 @@ jobs:
 
       - name: Build Docker image and store in cache
         uses: docker/build-push-action@c382f710d39a5bb4e430307530a720f50c2d3318
+        env:
+          DOCKER_BUILD_NO_SUMMARY: true
         with:
           context: .
           push: false
