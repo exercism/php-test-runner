@@ -34,6 +34,11 @@ for test_dir in tests/*; do
     #   -e "s~${test_dir_path}~/solution~g" \
     #   "${results_file_path}"
 
+    # Normalize the object ID of `var_dump(new stdClass())`
+    sed -i -E \
+        -e 's/(object\(stdClass\))(#[[:digit:]]+)/\1#79/g' \
+        "${results_file_path}"
+
     echo "${test_dir_name}: comparing results.json to expected_results.json"
     diff "${results_file_path}" "${expected_results_file_path}"
 
