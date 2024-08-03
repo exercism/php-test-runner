@@ -1,4 +1,4 @@
-![JUnit to JSON Tests](https://github.com/exercism/php-test-runner/workflows/Test%20JUnit-to-JSON/badge.svg) ![Smoke Test](https://github.com/exercism/php-test-runner/workflows/Smoke%20Test/badge.svg) ![Tooling image pushed](https://github.com/exercism/php-test-runner/workflows/Deploy/badge.svg)
+![Smoke Test](https://github.com/exercism/php-test-runner/workflows/Smoke%20Test/badge.svg) ![Tooling image pushed](https://github.com/exercism/php-test-runner/workflows/Deploy/badge.svg)
 
 # PHP Test Runner
 
