@@ -1,5 +1,7 @@
-# Ignore git details
+# Ignore git / GitHub details
+.appends
 .git
+.gitattributes
 .gitignore
 .github
 
@@ -11,12 +13,12 @@ output.json
 results.xml
 results.json
 
-# Ignore smoke test files
-test/
+# Ignore test files
+tests/
 
-junit-to-json/node_modules/
-junit-to-json/**/*.js
-.appends
-.gitattributes
+# Ignore build details
 .dockerignore
 Dockerfile
+
+# Ignore old PHPUnit log post-processor
+junit-handler/

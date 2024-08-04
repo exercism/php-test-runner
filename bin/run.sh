@@ -2,9 +2,7 @@
 
 set -euo pipefail
 
-PHPUNIT_BIN="./bin/phpunit-10.phar"
-JUNIT_RESULTS='results.xml'
-TEAMCITY_RESULTS='teamcity.txt'
+PHPUNIT_BIN="./vendor/bin/phpunit"
 EXERCISM_RESULTS='results.json'
 # shellcheck disable=SC2034 # Modifies XDebug behaviour when invoking PHP
 XDEBUG_MODE='off'
@@ -25,18 +23,11 @@ function main {
     return 0;
   fi
 
-  # JUnit results contain the unit test failures only. But they contain `@testdox` - readable test names.
-  # Teamcity results contain user output in addition to failures as "failed risky tests"
-  #   (command line arguments --disallow-test-output and --fail-on-risky).
-  # At the moment we require both logs to provide all information to the website.
-  output=$("${PHPUNIT_BIN}" \
+  # Our PHPUnit extension writes directly to ${EXERCISM_RESULT_FILE}
+  output=$(EXERCISM_RESULT_FILE="${output_dir%/}/${EXERCISM_RESULTS}" "${PHPUNIT_BIN}" \
     -d memory_limit=300M \
-    --log-junit "${output_dir%/}/${JUNIT_RESULTS}" \
-    --log-teamcity "${output_dir%/}/${TEAMCITY_RESULTS}" \
-    --no-configuration \
     --do-not-cache-result \
     --disallow-test-output \
-    --fail-on-risky \
     "${test_files%%*( )}" 2>&1)
   phpunit_exit_code=$?
   set -e
@@ -49,19 +40,19 @@ function main {
     return 0;
   fi
 
-  # This catches runtime errors in "global student code" (during `require_once`)
-  if [[ "${phpunit_exit_code}" -eq 2 ]]; then
-    if ! grep -q '<testcase' "${output_dir%/}/${JUNIT_RESULTS}"; then
-        output="${output#*" MB"}"
-        jo version=3 status=error message="${output//"$solution_dir/"/""}" tests="[]" > "${output_dir%/}/${EXERCISM_RESULTS}"
-        return 0;
-    fi
-  fi
+#   # This catches runtime errors in "global student code" (during `require_once`)
+#   if [[ "${phpunit_exit_code}" -eq 2 ]]; then
+#     if ! grep -q '<testcase' "${output_dir%/}/${JUNIT_RESULTS}"; then
+#         output="${output#*" MB"}"
+#         jo version=3 status=error message="${output//"$solution_dir/"/""}" tests="[]" > "${output_dir%/}/${EXERCISM_RESULTS}"
+#         return 0;
+#     fi
+#   fi
 
-  php junit-handler/run.php \
-    "${output_dir%/}/${EXERCISM_RESULTS}" \
-    "${output_dir%/}/${JUNIT_RESULTS}" \
-    "${output_dir%/}/${TEAMCITY_RESULTS}"
+  if [[ "${phpunit_exit_code}" -ne 0 ]]; then
+    echo "$output"
+    cat "${output_dir%/}/${EXERCISM_RESULTS}"
+  fi
 }
 
 function installed {
