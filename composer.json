@@ -1,0 +1,13 @@
+{
+    "name": "exercism/php-test-runner",
+    "type": "project",
+    "license": "AGPL-3.0-only",
+    "autoload": {
+        "psr-4": {
+            "Exercism\\PhpTestRunner\\": "src/"
+        }
+    },
+    "require": {
+        "phpunit/phpunit": "^10.5.29"
+    }
+}
