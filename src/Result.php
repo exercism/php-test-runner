@@ -18,9 +18,9 @@ final class Result implements JsonSerializable
     ) {
     }
 
-    public function isTestMethod(string $testMethodName): bool
+    public function isFailed(): bool
     {
-        return $this->testMethodName === $testMethodName;
+        return $this->testStatus === 'fail';
     }
 
     public function setUserOutput(string $output): void

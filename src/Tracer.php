@@ -7,6 +7,7 @@ namespace Exercism\PhpTestRunner;
 use Exercism\PhpTestRunner\Result;
 use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\Event;
+use PHPUnit\Event\Test\Failed;
 use PHPUnit\Event\Test\Passed;
 use PHPUnit\Event\Test\PrintedUnexpectedOutput;
 use PHPUnit\Event\TestRunner\Finished;
@@ -31,6 +32,7 @@ final class Tracer implements TracerInterface
     {
         match (\get_class($event)) {
             Passed::class => $this->addTestPassed($event),
+            Failed::class => $this->addTestFailed($event),
             PrintedUnexpectedOutput::class => $this->addTestOutput($event),
             // default => $this->addUnhandledEvent($event),
             default => true,
@@ -67,6 +69,35 @@ final class Tracer implements TracerInterface
         );
     }
 
+    private function addTestFailed(Failed $event): void
+    {
+        /** @var TestMethod */
+        $testMethod = $event->test();
+        $reflectionClass = new ReflectionClass($testMethod->className());
+        $reflectionMethod = $reflectionClass->getMethod($testMethod->methodName());
+
+        $phpUnitMessage = \trim($event->throwable()->asString());
+        $phpUnitMessage =\str_replace(
+            $testMethod->file(),
+            $testMethod->className() . '.php',
+            $phpUnitMessage
+        );
+        $phpUnitMessage = $testMethod->nameWithClass() . "\n" . $phpUnitMessage;
+
+        if (!empty($message)) {
+            $message = PHP_EOL . $message;
+        }
+
+        $this->result['tests'][] = new Result(
+            $testMethod->name(),
+            $testMethod->testDox()->prettifiedMethodName(),
+            'fail',
+            $this->methodCode($reflectionMethod),
+            '',
+            $phpUnitMessage,
+        );
+    }
+
     private function addTestOutput(PrintedUnexpectedOutput $event): void
     {
         // This must rely on the sequence of events!
@@ -78,9 +109,16 @@ final class Tracer implements TracerInterface
 
     private function saveResults(): void
     {
+        foreach ($this->result['tests'] as $result) {
+            if ($result->isFailed()) {
+                $this->result['status'] = 'fail';
+            }
+        }
+
         \file_put_contents(
             $this->fileName,
-            \json_encode($this->result, /*JSON_PRETTY_PRINT*/) . "\n",
+            \json_encode($this->result) . "\n",
+            // \json_encode($this->result, JSON_PRETTY_PRINT) . "\n",
         );
     }
 
