@@ -13,14 +13,19 @@ final class Result implements JsonSerializable
         private readonly string $testPrettyName,
         private readonly string $testStatus,
         private readonly string $testCode,
+        private string $userOutput = '',
         private readonly string $phpUnitMessage = '',
-        private readonly string $userOutput = '',
     ) {
     }
 
     public function isTestMethod(string $testMethodName): bool
     {
         return $this->testMethodName === $testMethodName;
+    }
+
+    public function setUserOutput(string $output): void
+    {
+        $this->userOutput = $output;
     }
 
     public function jsonSerialize(): mixed

@@ -27,7 +27,6 @@ function main {
   output=$(EXERCISM_RESULT_FILE="${output_dir%/}/${EXERCISM_RESULTS}" "${PHPUNIT_BIN}" \
     -d memory_limit=300M \
     --do-not-cache-result \
-    --disallow-test-output \
     "${test_files%%*( )}" 2>&1)
   phpunit_exit_code=$?
   set -e

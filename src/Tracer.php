@@ -8,6 +8,7 @@ use Exercism\PhpTestRunner\Result;
 use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\Event;
 use PHPUnit\Event\Test\Passed;
+use PHPUnit\Event\Test\PrintedUnexpectedOutput;
 use PHPUnit\Event\TestRunner\Finished;
 use PHPUnit\Event\Tracer\Tracer as TracerInterface;
 use ReflectionClass;
@@ -30,7 +31,8 @@ final class Tracer implements TracerInterface
     {
         match (\get_class($event)) {
             Passed::class => $this->addTestPassed($event),
-//            default => $this->addUnhandledEvent($event),
+            PrintedUnexpectedOutput::class => $this->addTestOutput($event),
+            // default => $this->addUnhandledEvent($event),
             default => true,
         };
 
@@ -63,6 +65,15 @@ final class Tracer implements TracerInterface
             'pass',
             $this->methodCode($reflectionMethod),
         );
+    }
+
+    private function addTestOutput(PrintedUnexpectedOutput $event): void
+    {
+        // This must rely on the sequence of events!
+
+        /** @var Result */
+        $lastTest = $this->result['tests'][\array_key_last($this->result['tests'])];
+        $lastTest->setUserOutput($event->output());
     }
 
     private function saveResults(): void
