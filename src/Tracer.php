@@ -58,14 +58,12 @@ final class Tracer implements TracerInterface
     {
         /** @var TestMethod */
         $testMethod = $event->test();
-        $reflectionClass = new ReflectionClass($testMethod->className());
-        $reflectionMethod = $reflectionClass->getMethod($testMethod->methodName());
 
         $this->result['tests'][] = new Result(
             $testMethod->name(),
             $testMethod->testDox()->prettifiedMethodName(),
             'pass',
-            $this->methodCode($reflectionMethod),
+            $this->methodCode($testMethod),
         );
     }
 
@@ -73,8 +71,6 @@ final class Tracer implements TracerInterface
     {
         /** @var TestMethod */
         $testMethod = $event->test();
-        $reflectionClass = new ReflectionClass($testMethod->className());
-        $reflectionMethod = $reflectionClass->getMethod($testMethod->methodName());
 
         $phpUnitMessage = \trim($event->throwable()->asString());
         $phpUnitMessage =\str_replace(
@@ -92,7 +88,7 @@ final class Tracer implements TracerInterface
             $testMethod->name(),
             $testMethod->testDox()->prettifiedMethodName(),
             'fail',
-            $this->methodCode($reflectionMethod),
+            $this->methodCode($testMethod),
             '',
             $phpUnitMessage,
         );
@@ -122,8 +118,11 @@ final class Tracer implements TracerInterface
         );
     }
 
-    private function methodCode(ReflectionMethod $reflectionMethod): string
+    private function methodCode(TestMethod $testMethod): string
     {
+        $reflectionClass = new ReflectionClass($testMethod->className());
+        $reflectionMethod = $reflectionClass->getMethod($testMethod->methodName());
+
         // Line numbers are 1-based, array index is 0-based.
         // Reflections start line is the function declaration, end line is
         // closing curly bracket.
