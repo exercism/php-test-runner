@@ -30,6 +30,12 @@ This is what runs inside the production Docker image when students submit their 
 In `./tests/` are golden tests to verify that the test runner behaves as expected.
 The CI uses `bin/run-tests.sh` to execute them.
 
+### Running tests locally
+
+Recommended to easily test new test cases during development.
+Use `bin/run-locally.sh <test-slug>` to run PHPUnit in your current shell and compare the resulting JSON to `expected_results.json`.
+Make sure you have at least PHP 8.1 installed.
+
 ### Running tests in Docker locally
 
 This is the recommended way to use this locally.
