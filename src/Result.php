@@ -35,12 +35,12 @@ final class Result implements JsonSerializable
             'test_code' => $this->testCode,
         ];
 
-        if ($this->phpUnitMessage !== '') {
-            $result['message'] = $this->phpUnitMessage;
-        }
-
         if ($this->userOutput !== '') {
             $result['output'] = $this->userOutput;
+        }
+
+        if ($this->phpUnitMessage !== '') {
+            $result['message'] = $this->phpUnitMessage;
         }
 
         return $result;
