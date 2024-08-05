@@ -9,7 +9,6 @@ use JsonSerializable;
 final class Result implements JsonSerializable
 {
     public function __construct(
-        private readonly string $testMethodName,
         private readonly string $testPrettyName,
         private readonly string $testStatus,
         private readonly string $testCode,

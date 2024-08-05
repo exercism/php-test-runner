@@ -47,7 +47,6 @@ final class Tracer implements TracerInterface
     private function addUnhandledEvent(Event $event): void
     {
         $this->result['tests'][] = new Result(
-            'not a method',
             $event->asString(),
             'fail',
             'no code yet',
@@ -60,7 +59,6 @@ final class Tracer implements TracerInterface
         $testMethod = $event->test();
 
         $this->result['tests'][] = new Result(
-            $testMethod->name(),
             $testMethod->testDox()->prettifiedMethodName(),
             'pass',
             $this->methodCode($testMethod),
@@ -85,7 +83,6 @@ final class Tracer implements TracerInterface
         }
 
         $this->result['tests'][] = new Result(
-            $testMethod->name(),
             $testMethod->testDox()->prettifiedMethodName(),
             'fail',
             $this->methodCode($testMethod),
