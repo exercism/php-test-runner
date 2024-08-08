@@ -78,10 +78,6 @@ final class Tracer implements TracerInterface
         );
         $phpUnitMessage = $testMethod->nameWithClass() . "\n" . $phpUnitMessage;
 
-        if (!empty($message)) {
-            $message = PHP_EOL . $message;
-        }
-
         $this->result['tests'][] = new Result(
             $testMethod->testDox()->prettifiedMethodName(),
             'fail',
