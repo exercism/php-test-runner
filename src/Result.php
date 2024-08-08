@@ -22,6 +22,11 @@ final class Result implements JsonSerializable
         return $this->testStatus === 'fail';
     }
 
+    public function isErrored(): bool
+    {
+        return $this->testStatus === 'error';
+    }
+
     public function setUserOutput(string $output): void
     {
         $this->userOutput = $output;

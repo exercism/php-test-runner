@@ -7,6 +7,7 @@ namespace Exercism\PhpTestRunner;
 use Exercism\PhpTestRunner\Result;
 use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\Event;
+use PHPUnit\Event\Test\Errored;
 use PHPUnit\Event\Test\Failed;
 use PHPUnit\Event\Test\Passed;
 use PHPUnit\Event\Test\PrintedUnexpectedOutput;
@@ -33,6 +34,7 @@ final class Tracer implements TracerInterface
         match (\get_class($event)) {
             Passed::class => $this->addTestPassed($event),
             Failed::class => $this->addTestFailed($event),
+            Errored::class => $this->addTestErrored($event),
             PrintedUnexpectedOutput::class => $this->addTestOutput($event),
             // default => $this->addUnhandledEvent($event),
             default => true,
@@ -87,6 +89,28 @@ final class Tracer implements TracerInterface
         );
     }
 
+    private function addTestErrored(Errored $event): void
+    {
+        /** @var TestMethod */
+        $testMethod = $event->test();
+
+        $phpUnitMessage = \trim($event->throwable()->asString());
+        $phpUnitMessage =\str_replace(
+            \dirname($testMethod->file()) . '/',
+            '',
+            $phpUnitMessage
+        );
+        $phpUnitMessage = $testMethod->nameWithClass() . "\n" . $phpUnitMessage;
+
+        $this->result['tests'][] = new Result(
+            $testMethod->testDox()->prettifiedMethodName(),
+            'error',
+            $this->methodCode($testMethod),
+            '',
+            $phpUnitMessage,
+        );
+    }
+
     private function addTestOutput(PrintedUnexpectedOutput $event): void
     {
         // This must rely on the sequence of events!
@@ -99,7 +123,7 @@ final class Tracer implements TracerInterface
     private function saveResults(): void
     {
         foreach ($this->result['tests'] as $result) {
-            if ($result->isFailed()) {
+            if ($result->isFailed() || $result->isErrored()) {
                 $this->result['status'] = 'fail';
             }
         }
