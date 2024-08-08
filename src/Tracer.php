@@ -72,8 +72,8 @@ final class Tracer implements TracerInterface
 
         $phpUnitMessage = \trim($event->throwable()->asString());
         $phpUnitMessage =\str_replace(
-            $testMethod->file(),
-            $testMethod->className() . '.php',
+            \dirname($testMethod->file()) . '/',
+            '',
             $phpUnitMessage
         );
         $phpUnitMessage = $testMethod->nameWithClass() . "\n" . $phpUnitMessage;
