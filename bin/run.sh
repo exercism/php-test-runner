@@ -24,10 +24,15 @@ function main {
   fi
 
   # Our PHPUnit extension writes directly to ${EXERCISM_RESULT_FILE}
-  output=$(EXERCISM_RESULT_FILE="${output_dir%/}/${EXERCISM_RESULTS}" "${PHPUNIT_BIN}" \
-    -d memory_limit=300M \
-    --do-not-cache-result \
-    "${test_files%%*( )}" 2>&1)
+  # Our PHPUnit extension requires ${EXERCISM_EXERCISE_DIR} before PHPUnit provides it
+  output=$( \
+    EXERCISM_RESULT_FILE="${output_dir%/}/${EXERCISM_RESULTS}" \
+    EXERCISM_EXERCISE_DIR="${solution_dir%/}" \
+    "${PHPUNIT_BIN}" \
+      -d memory_limit=300M \
+      --do-not-cache-result \
+      "${test_files%%*( )}" 2>&1 \
+  )
   phpunit_exit_code=$?
   set -e
 
@@ -47,11 +52,6 @@ function main {
 #         return 0;
 #     fi
 #   fi
-
-  if [[ "${phpunit_exit_code}" -ne 0 ]]; then
-    echo "$output"
-    cat "${output_dir%/}/${EXERCISM_RESULTS}"
-  fi
 }
 
 function installed {

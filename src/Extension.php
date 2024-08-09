@@ -17,11 +17,16 @@ final class Extension implements ExtensionInterface
         Facade $facade,
         ParameterCollection $parameters,
     ): void {
-        $fileName = \getenv('EXERCISM_RESULT_FILE');
-        if (empty($fileName)) {
-            $fileName = $parameters->get('fileName');
+        $outFileName = \getenv('EXERCISM_RESULT_FILE');
+        if (empty($outFileName)) {
+            $outFileName = $parameters->get('outFileName');
         }
 
-        $facade->registerTracer(new Tracer($fileName));
+        $exerciseDir = \getenv('EXERCISM_EXERCISE_DIR');
+        if (empty($exerciseDir)) {
+            $exerciseDir = \getenv('PWD');
+        }
+
+        $facade->registerTracer(new Tracer($outFileName, $exerciseDir));
     }
 }

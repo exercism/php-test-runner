@@ -5,7 +5,7 @@
 >
     <extensions>
         <bootstrap class="Exercism\PhpTestRunner\Extension">
-            <parameter name="fileName" value="results.json"/>
+            <parameter name="outFileName" value="results.json"/>
         </bootstrap>
     </extensions>
 </phpunit>

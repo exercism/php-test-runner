@@ -7,6 +7,7 @@ namespace Exercism\PhpTestRunner;
 use Exercism\PhpTestRunner\Result;
 use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\Event;
+use PHPUnit\Event\Test\BeforeFirstTestMethodErrored;
 use PHPUnit\Event\Test\Errored;
 use PHPUnit\Event\Test\Failed;
 use PHPUnit\Event\Test\Passed;
@@ -14,7 +15,6 @@ use PHPUnit\Event\Test\PrintedUnexpectedOutput;
 use PHPUnit\Event\TestRunner\Finished;
 use PHPUnit\Event\Tracer\Tracer as TracerInterface;
 use ReflectionClass;
-use ReflectionMethod;
 
 final class Tracer implements TracerInterface
 {
@@ -25,7 +25,8 @@ final class Tracer implements TracerInterface
     ];
 
     public function __construct(
-        private readonly string $fileName,
+        private readonly string $outFileName,
+        private readonly string $exerciseDir,
     ) {
     }
 
@@ -35,6 +36,7 @@ final class Tracer implements TracerInterface
             Passed::class => $this->addTestPassed($event),
             Failed::class => $this->addTestFailed($event),
             Errored::class => $this->addTestErrored($event),
+            BeforeFirstTestMethodErrored::class => $this->addBeforeFirstTestMethodErrored($event),
             PrintedUnexpectedOutput::class => $this->addTestOutput($event),
             // default => $this->addUnhandledEvent($event),
             default => true,
@@ -73,8 +75,8 @@ final class Tracer implements TracerInterface
         $testMethod = $event->test();
 
         $phpUnitMessage = \trim($event->throwable()->asString());
-        $phpUnitMessage =\str_replace(
-            \dirname($testMethod->file()) . '/',
+        $phpUnitMessage = \str_replace(
+            $this->exerciseDir . '/',
             '',
             $phpUnitMessage
         );
@@ -95,8 +97,8 @@ final class Tracer implements TracerInterface
         $testMethod = $event->test();
 
         $phpUnitMessage = \trim($event->throwable()->asString());
-        $phpUnitMessage =\str_replace(
-            \dirname($testMethod->file()) . '/',
+        $phpUnitMessage = \str_replace(
+            $this->exerciseDir . '/',
             '',
             $phpUnitMessage
         );
@@ -109,6 +111,19 @@ final class Tracer implements TracerInterface
             '',
             $phpUnitMessage,
         );
+    }
+
+    private function addBeforeFirstTestMethodErrored(BeforeFirstTestMethodErrored $event): void
+    {
+        $phpUnitMessage = \trim($event->throwable()->asString());
+        $phpUnitMessage = \str_replace(
+            $this->exerciseDir . '/',
+            '',
+            $phpUnitMessage
+        );
+
+        $this->result['status'] = 'error';
+        $this->result['message'] = $phpUnitMessage;
     }
 
     private function addTestOutput(PrintedUnexpectedOutput $event): void
@@ -129,7 +144,7 @@ final class Tracer implements TracerInterface
         }
 
         \file_put_contents(
-            $this->fileName,
+            $this->outFileName,
             \json_encode($this->result) . "\n",
             // \json_encode($this->result, JSON_PRETTY_PRINT) . "\n",
         );
