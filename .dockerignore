@@ -23,6 +23,3 @@ bin/*
 Dockerfile
 vendor/*
 composer.lock
-
-# Ignore old PHPUnit log post-processor
-junit-handler/
