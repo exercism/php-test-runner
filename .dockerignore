@@ -19,6 +19,8 @@ tests/
 # Ignore build details
 .dockerignore
 Dockerfile
+vendor/*
+composer.lock
 
 # Ignore old PHPUnit log post-processor
 junit-handler/
