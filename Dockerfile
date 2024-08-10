@@ -14,11 +14,14 @@ COPY --from=composer:2.7.7 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /opt/test-runner
 COPY . .
-# composer warns about missing a "root version" to resolve dependencies. Fake to stop warning
+# composer warns about missing a "root version" to resolve dependencies. Fake to stop warning.
+# composer warns about running as root. Silence it we know what we are doing.
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && php --modules \
     && composer --version \
-    && COMPOSER_ROOT_VERSION=1.0.0 composer install --no-cache --no-dev --no-interaction --no-progress
+    && COMPOSER_ROOT_VERSION=1.0.0 \
+        COMPOSER_ALLOW_SUPERUSER=1 \
+        composer install --no-cache --no-dev --no-interaction --no-progress
 
 FROM php:8.3.10-cli-alpine3.20 AS runtime
 
