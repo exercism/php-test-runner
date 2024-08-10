@@ -171,9 +171,12 @@ final class Tracer implements TracerInterface
             ARRAY_FILTER_USE_KEY,
         );
 
-        // Unindent lines 2 levels of 4 spaces each
+        // Unindent lines 2 levels of 4 spaces each (if possible)
         $codeLines = \array_map(
-            fn ($line) => \substr($line, 2 * 4),
+            fn ($line) => \str_starts_with($line, '        ')
+                ? \substr($line, 2 * 4)
+                : $line
+                ,
             $codeLines,
         );
 
