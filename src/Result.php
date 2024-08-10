@@ -12,6 +12,7 @@ final class Result implements JsonSerializable
         private readonly string $testPrettyName,
         private readonly string $testStatus,
         private readonly string $testCode,
+        private int $taskId = 0,
         private string $userOutput = '',
         private readonly string $phpUnitMessage = '',
     ) {
@@ -39,6 +40,10 @@ final class Result implements JsonSerializable
             'status' => $this->testStatus,
             'test_code' => $this->testCode,
         ];
+
+        if ($this->taskId !== 0) {
+            $result['task_id'] = $this->taskId;
+        }
 
         if ($this->userOutput !== '') {
             $result['output'] = $this->userOutput;

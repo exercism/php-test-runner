@@ -66,6 +66,7 @@ final class Tracer implements TracerInterface
             $testMethod->testDox()->prettifiedMethodName(),
             'pass',
             $this->methodCode($testMethod),
+            $this->taskId($testMethod),
         );
     }
 
@@ -86,6 +87,7 @@ final class Tracer implements TracerInterface
             $testMethod->testDox()->prettifiedMethodName(),
             'fail',
             $this->methodCode($testMethod),
+            $this->taskId($testMethod),
             '',
             $phpUnitMessage,
         );
@@ -108,6 +110,7 @@ final class Tracer implements TracerInterface
             $testMethod->testDox()->prettifiedMethodName(),
             'error',
             $this->methodCode($testMethod),
+            $this->taskId($testMethod),
             '',
             $phpUnitMessage,
         );
@@ -181,5 +184,20 @@ final class Tracer implements TracerInterface
         );
 
         return \implode('', $codeLines);
+    }
+
+    private function taskId(TestMethod $testMethod): int
+    {
+        $reflectionClass = new ReflectionClass($testMethod->className());
+        $reflectionMethod = $reflectionClass->getMethod($testMethod->methodName());
+        $docComment = $reflectionMethod->getDocComment();
+        if ($docComment === false) {
+            return 0;
+        }
+
+        $matches=[];
+        \preg_match('/@task_id\s+(\d+)/', $docComment, $matches);
+
+        return \count($matches ?? []) > 1 ? (int)$matches[1] : 0;
     }
 }

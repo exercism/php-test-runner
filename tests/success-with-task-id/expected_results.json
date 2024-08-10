@@ -1,0 +1,1 @@
+{"version":3,"status":"pass","tests":[{"name":"Hello world","status":"pass","test_code":"$this->assertEquals('Hello, World!', helloWorld());\n","task_id":99}]}
