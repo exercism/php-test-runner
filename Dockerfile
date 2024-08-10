@@ -39,6 +39,4 @@ WORKDIR /opt/test-runner
 
 USER appuser
 
-RUN ls -la && ls -la bin
-
 ENTRYPOINT ["/opt/test-runner/bin/run.sh"]
