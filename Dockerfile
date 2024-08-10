@@ -18,7 +18,8 @@ COPY . .
 # composer warns about running as root. Silence it we know what we are doing.
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && php --modules \
-    && composer --version \
+    && COMPOSER_ALLOW_SUPERUSER=1 \
+        composer --version \
     && COMPOSER_ROOT_VERSION=1.0.0 \
         COMPOSER_ALLOW_SUPERUSER=1 \
         composer install --no-cache --no-dev --no-interaction --no-progress
