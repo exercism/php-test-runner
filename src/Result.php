@@ -12,7 +12,7 @@ final class Result implements JsonSerializable
         private readonly string $testPrettyName,
         private readonly string $testStatus,
         private readonly string $testCode,
-        private int $taskId = 0,
+        private readonly int $taskId = 0,
         private string $userOutput = '',
         private readonly string $phpUnitMessage = '',
     ) {
