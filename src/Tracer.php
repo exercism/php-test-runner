@@ -166,12 +166,12 @@ final class Tracer implements TracerInterface
         // code starting on second line after function declaration, and the
         // closing bracket will be on the line after the last code line.
         $start = $reflectionMethod->getStartLine() - 1 + 2;
-        $end = $reflectionMethod->getEndLine() - 1 - 1;
+        $length = $reflectionMethod->getEndLine() - 1 - $start;
 
-        $codeLines = \array_filter(
+        $codeLines = \array_slice(
             \file($reflectionMethod->getFileName()),
-            static fn ($index) => $index >= $start && $index <= $end,
-            ARRAY_FILTER_USE_KEY,
+            $start,
+            $length,
         );
 
         // Unindent lines 2 levels of 4 spaces each (if possible)
