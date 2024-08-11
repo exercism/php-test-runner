@@ -1,25 +1,11 @@
-# Ignore git / GitHub details
-.appends
-.git
-.gitattributes
-.gitignore
-.github
+# Disallow everything
+*
 
-# Ignore run artifacts
-error_log
-metadata.json
-output
-output.json
-results.xml
-results.json
-
-# Ignore test files
-tests/
-bin/*
+# Allow list
 !bin/run.sh
-
-# Ignore build details
-.dockerignore
-Dockerfile
-vendor/*
-composer.lock
+!CODE_OF_CONDUCT.md
+!composer.json
+!LICENSE
+!phpunit.xml
+!README.md
+!src
