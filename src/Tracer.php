@@ -196,8 +196,8 @@ final class Tracer implements TracerInterface
         }
 
         $matches=[];
-        \preg_match('/@task_id\s+(\d+)/', $docComment, $matches);
+        $matchCount = \preg_match('/@task_id\s+(\d+)/', $docComment, $matches);
 
-        return \count($matches ?? []) > 1 ? (int)$matches[1] : 0;
+        return $matchCount >= 1 ? (int)$matches[1] : 0;
     }
 }
