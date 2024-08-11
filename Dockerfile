@@ -7,7 +7,7 @@ WORKDIR /usr/local/bin
 RUN curl -L -o install-php-extensions \
     https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions \
     && chmod +x install-php-extensions \
-    && install-php-extensions ds intl
+    && install-php-extensions ds-^1@stable intl
 
 COPY --from=composer:2.7.7 /usr/bin/composer /usr/local/bin/composer
 
