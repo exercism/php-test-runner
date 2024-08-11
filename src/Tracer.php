@@ -140,6 +140,7 @@ final class Tracer implements TracerInterface
 
     private function saveResults(): void
     {
+        /** @var Result $result */
         foreach ($this->result['tests'] as $result) {
             if ($result->isFailed() || $result->isErrored()) {
                 $this->result['status'] = 'fail';
