@@ -18,6 +18,12 @@ use ReflectionClass;
 
 final class Tracer implements TracerInterface
 {
+    /** Enable to add all events to result JSON */
+    private const DEBUG_ALL_EVENTS = false;
+
+    /** Enable to pretty print result JSON */
+    private const DEBUG_PRETTY_JSON = false;
+
     /**
      * Represents the result of the test run for Exercism
      * @see https://exercism.org/docs/building/tooling/test-runners/interface#h-top-level
@@ -44,8 +50,10 @@ final class Tracer implements TracerInterface
             Errored::class => $this->addTestErrored($event),
             BeforeFirstTestMethodErrored::class => $this->addBeforeFirstTestMethodErrored($event),
             PrintedUnexpectedOutput::class => $this->addTestOutput($event),
-            // default => $this->addUnhandledEvent($event),
-            default => true,
+            default => self:: DEBUG_ALL_EVENTS
+                ? $this->addUnhandledEvent($event)
+                : true
+                ,
         };
 
 
@@ -155,8 +163,10 @@ final class Tracer implements TracerInterface
 
         \file_put_contents(
             $this->outFileName,
-            \json_encode($this->result) . "\n",
-            // \json_encode($this->result, JSON_PRETTY_PRINT) . "\n",
+            \json_encode(
+                $this->result,
+                self::DEBUG_PRETTY_JSON ? JSON_PRETTY_PRINT : 0
+            ) . "\n",
         );
     }
 
