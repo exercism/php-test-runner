@@ -18,10 +18,16 @@ use ReflectionClass;
 
 final class Tracer implements TracerInterface
 {
+    /**
+     * Represents the result of the test run for Exercism
+     * @see https://exercism.org/docs/building/tooling/test-runners/interface#h-top-level
+     * @var array{version: int, status: string, tests: list<Result>, messsage: string}
+     */
     private array $result = [
         'version' => 3,
-        'status' => 'pass',
-        'tests' => [],
+        'status' => 'pass', // 'pass', 'fail', 'error'
+        'tests' => [], // internally uses `Result`
+        // 'message' => '', // added, when 'status' === 'error'
     ];
 
     public function __construct(

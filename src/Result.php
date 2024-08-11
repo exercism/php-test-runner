@@ -6,11 +6,15 @@ namespace Exercism\PhpTestRunner;
 
 use JsonSerializable;
 
+/**
+ * Represents a test result for Exercism
+ * @see https://exercism.org/docs/building/tooling/test-runners/interface#h-per-test
+ */
 final class Result implements JsonSerializable
 {
     public function __construct(
         private readonly string $testPrettyName,
-        private readonly string $testStatus,
+        private readonly string $testStatus, // 'pass', 'fail', 'error'
         private readonly string $testCode,
         private readonly int $taskId = 0,
         private string $userOutput = '',
