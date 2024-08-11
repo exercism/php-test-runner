@@ -1,21 +1,20 @@
 FROM php:8.3.10-cli-alpine3.20 AS build
 
-RUN apk update \
-    && apk add --no-cache ca-certificates curl jo zip unzip
+RUN apk add --no-cache ca-certificates curl jo zip unzip
 
 WORKDIR /usr/local/bin
 
 RUN curl -L -o install-php-extensions \
     https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions \
     && chmod +x install-php-extensions \
-    && install-php-extensions intl
+    && install-php-extensions ds intl
 
 COPY --from=composer:2.7.7 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /opt/test-runner
 COPY . .
 # composer warns about missing a "root version" to resolve dependencies. Fake to stop warning.
-# composer warns about running as root. Silence it we know what we are doing.
+# composer warns about running as root. Silence it, we know what we are doing.
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     && php --modules \
     && COMPOSER_ALLOW_SUPERUSER=1 \
