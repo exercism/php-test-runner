@@ -50,11 +50,25 @@ final class Result implements JsonSerializable
         }
 
         if ($this->userOutput !== '') {
-            $result['output'] = $this->userOutput;
+            // In 2024 some innocent ASCII code still fools displays and editors.
+            $result['output'] = \str_replace(
+                [
+                    "\u{7F}", // Delete
+                ],
+                "\u{FFFD}", // Unicode substitute for invalid characters
+                $this->userOutput
+            );
         }
 
         if ($this->phpUnitMessage !== '') {
-            $result['message'] = $this->phpUnitMessage;
+            // In 2024 some innocent ASCII code still fools displays and editors.
+            $result['message'] = \str_replace(
+                [
+                    "\u{7F}", // Delete
+                ],
+                "\u{FFFD}", // Unicode substitute for invalid characters
+                $this->phpUnitMessage
+            );
         }
 
         return $result;

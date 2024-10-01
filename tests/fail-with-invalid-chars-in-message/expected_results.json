@@ -1,0 +1,1 @@
+{"version":3,"status":"fail","tests":[{"name":"Hello world","status":"fail","test_code":"$this->assertEquals('Never matches', helloWorld());\n","message":"HelloWorldTest::testHelloWorld\nFailed asserting that two strings are equal.\n--- Expected\n+++ Actual\n@@ @@\n-'Never matches'\n+'Handle invalid chars: \ufffd \ufffd\ufffd\ufffd\ufffd\ufffd\ufffd!'\n\nHelloWorldTest.php:14"}]}
