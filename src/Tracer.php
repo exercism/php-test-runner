@@ -165,9 +165,8 @@ final class Tracer implements TracerInterface
             $this->outFileName,
             \json_encode(
                 $this->result,
-                JSON_INVALID_UTF8_SUBSTITUTE | (
-                    self::DEBUG_PRETTY_JSON ? JSON_PRETTY_PRINT : 0
-                )
+                JSON_INVALID_UTF8_SUBSTITUTE
+                | (self::DEBUG_PRETTY_JSON ? JSON_PRETTY_PRINT : 0)
             ) . "\n",
         );
     }
