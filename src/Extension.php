@@ -21,11 +21,13 @@ final class Extension implements ExtensionInterface
         if (empty($outFileName)) {
             $outFileName = $parameters->get('outFileName');
         }
+        assert(is_string($outFileName));
 
         $exerciseDir = \getenv('EXERCISM_EXERCISE_DIR');
         if (empty($exerciseDir)) {
             $exerciseDir = \getenv('PWD');
         }
+        assert(is_string($exerciseDir));
 
         $facade->registerTracer(new Tracer($outFileName, $exerciseDir));
     }

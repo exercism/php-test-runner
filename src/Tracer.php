@@ -27,7 +27,7 @@ final class Tracer implements TracerInterface
     /**
      * Represents the result of the test run for Exercism
      * @see https://exercism.org/docs/building/tooling/test-runners/interface#h-top-level
-     * @var array{version: int, status: string, tests: list<Result>, messsage: string}
+     * @var array{version: int, status: string, tests: list<Result>, messsage?: string}
      */
     private array $result = [
         'version' => 3,
@@ -50,12 +50,11 @@ final class Tracer implements TracerInterface
             Errored::class => $this->addTestErrored($event),
             BeforeFirstTestMethodErrored::class => $this->addBeforeFirstTestMethodErrored($event),
             PrintedUnexpectedOutput::class => $this->addTestOutput($event),
-            default => self:: DEBUG_ALL_EVENTS
+            default => self::DEBUG_ALL_EVENTS // @phpstan-ignore ternary.alwaysFalse
                 ? $this->addUnhandledEvent($event)
                 : true
                 ,
         };
-
 
         if ($event instanceof Finished) {
             $this->saveResults();
@@ -73,8 +72,8 @@ final class Tracer implements TracerInterface
 
     private function addTestPassed(Passed $event): void
     {
-        /** @var TestMethod */
         $testMethod = $event->test();
+        assert($testMethod instanceof TestMethod);
 
         $this->result['tests'][] = new Result(
             $testMethod->testDox()->prettifiedMethodName(),
@@ -86,8 +85,8 @@ final class Tracer implements TracerInterface
 
     private function addTestFailed(Failed $event): void
     {
-        /** @var TestMethod */
         $testMethod = $event->test();
+        assert($testMethod instanceof TestMethod);
 
         $phpUnitMessage = \trim($event->throwable()->asString());
         $phpUnitMessage = \str_replace(
@@ -109,8 +108,8 @@ final class Tracer implements TracerInterface
 
     private function addTestErrored(Errored $event): void
     {
-        /** @var TestMethod */
         $testMethod = $event->test();
+        assert($testMethod instanceof TestMethod);
 
         $phpUnitMessage = \trim($event->throwable()->asString());
         $phpUnitMessage = \str_replace(
@@ -147,14 +146,12 @@ final class Tracer implements TracerInterface
     {
         // This must rely on the sequence of events!
 
-        /** @var Result */
         $lastTest = $this->result['tests'][\array_key_last($this->result['tests'])];
         $lastTest->setUserOutput($event->output());
     }
 
     private function saveResults(): void
     {
-        /** @var Result $result */
         foreach ($this->result['tests'] as $result) {
             if ($result->isFailed() || $result->isErrored()) {
                 $this->result['status'] = 'fail';
@@ -166,7 +163,7 @@ final class Tracer implements TracerInterface
             \json_encode(
                 $this->result,
                 JSON_INVALID_UTF8_SUBSTITUTE
-                | (self::DEBUG_PRETTY_JSON ? JSON_PRETTY_PRINT : 0)
+                | (self::DEBUG_PRETTY_JSON ? JSON_PRETTY_PRINT : 0) // @phpstan-ignore ternary.alwaysFalse
             ) . "\n",
         );
     }
@@ -186,15 +183,16 @@ final class Tracer implements TracerInterface
         $start = $reflectionMethod->getStartLine() - 1 + 2;
         $length = $reflectionMethod->getEndLine() - 1 - $start;
 
-        $codeLines = \array_slice(
-            \file($reflectionMethod->getFileName()),
-            $start,
-            $length,
-        );
+        $testFileName = $reflectionMethod->getFileName();
+        assert(is_string($testFileName));
+        $testCodeLines = \file($testFileName);
+        assert(is_array($testCodeLines));
+
+        $codeLines = \array_slice($testCodeLines, $start, $length);
 
         // Unindent lines 2 levels of 4 spaces each (if possible)
         $codeLines = \array_map(
-            fn ($line) => \str_starts_with($line, '        ')
+            static fn ($line) => \str_starts_with($line, '        ')
                 ? \substr($line, 2 * 4)
                 : $line
                 ,
