@@ -6,8 +6,11 @@ namespace Exercism\PhpTestRunner;
 
 use JsonSerializable;
 
+use function str_replace;
+
 /**
  * Represents a test result for Exercism
+ *
  * @see https://exercism.org/docs/building/tooling/test-runners/interface#h-per-test
  */
 final class Result implements JsonSerializable
@@ -51,23 +54,19 @@ final class Result implements JsonSerializable
 
         if ($this->userOutput !== '') {
             // In 2024 some innocent ASCII code still fools displays and editors.
-            $result['output'] = \str_replace(
-                [
-                    "\u{7F}", // Delete
-                ],
+            $result['output'] = str_replace(
+                "\u{7F}", // Delete
                 "\u{FFFD}", // Unicode substitute for invalid characters
-                $this->userOutput
+                $this->userOutput,
             );
         }
 
         if ($this->phpUnitMessage !== '') {
             // In 2024 some innocent ASCII code still fools displays and editors.
-            $result['message'] = \str_replace(
-                [
-                    "\u{7F}", // Delete
-                ],
+            $result['message'] = str_replace(
+                "\u{7F}", // Delete
                 "\u{FFFD}", // Unicode substitute for invalid characters
-                $this->phpUnitMessage
+                $this->phpUnitMessage,
             );
         }
 
