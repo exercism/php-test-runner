@@ -8,3 +8,7 @@ updates:
       interval: 'monthly'
     labels:
       - 'x:size/tiny'
+    groups:
+      github-actions:
+        patterns:
+          - '*'
