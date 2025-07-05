@@ -10,7 +10,7 @@ It meets the complete spec for testing all exercises.
 ### Docker image
 
 The website uses isolated Docker images to run untrusted code in a sandbox.
-The image provided by this repository consists of PHP 8.3.10 (PHPUnit 10).
+The image provided by this repository consists of PHP 8.4.10 (PHPUnit 11).
 All final assets are built into the image, because the image does not have network access once in use.
 
 Includes PHP extensions: ds, intl
