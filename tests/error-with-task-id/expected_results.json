@@ -1,0 +1,1 @@
+{"version":3,"status":"fail","tests":[{"name":"Hello world","status":"error","test_code":"$this->assertEquals('Hello, World!', helloWorld());\n","task_id":99,"message":"HelloWorldTest::testHelloWorld\nBadFunctionCallException: Implement the helloWorld() function\n\nHelloWorld.php:5\nHelloWorldTest.php:15"}]}
