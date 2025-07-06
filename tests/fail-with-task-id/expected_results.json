@@ -1,0 +1,1 @@
+{"version":3,"status":"fail","tests":[{"name":"Hello world","status":"fail","test_code":"$this->assertEquals('Hello, World!', helloWorld());\n","task_id":99,"message":"HelloWorldTest::testHelloWorld\nFailed asserting that two strings are equal.\n--- Expected\n+++ Actual\n@@ @@\n-'Hello, World!'\n+'Goodbye, Mars!'\n\nHelloWorldTest.php:15"}]}
