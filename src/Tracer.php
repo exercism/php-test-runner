@@ -170,6 +170,10 @@ final class Tracer implements TracerInterface
     {
         // This must rely on the sequence of events!
 
+        if (count($this->result['tests']) === 0) {
+            return;
+        }
+
         /** @var Result $lastTest */
         $lastTest = $this->result['tests'][array_key_last($this->result['tests'])];
         $lastTest->setUserOutput($event->output());
