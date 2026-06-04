@@ -48,7 +48,7 @@ final class Tracer implements TracerInterface
      *
      * @see https://exercism.org/docs/building/tooling/test-runners/interface#h-top-level
      *
-     * @var array{version: int, status: string, tests: list<Result>, messsage?: string}
+     * @var array{version: int, status: string, tests: list<Result>, message?: string}
      */
     private array $result = [
         'version' => 3,
