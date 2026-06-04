@@ -15,6 +15,8 @@ All final assets are built into the image, because the image does not have netwo
 
 Includes PHP extensions: ds, intl
 
+Default PHP modules available: Core, ctype, date, dom, fileinfo, filter, hash, iconv, json, libxml, mbstring, pcre, random, Reflection, SimpleXML, sodium, SPL, standard, tokenizer, xml, xmlreader, xmlwriter, zlib
+
 ### Test runner
 
 Test running a solution is coordinated by a bash script at `bin/run.sh` taking 3 positional arguments:
