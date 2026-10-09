@@ -11,7 +11,7 @@ updates:
     groups:
       github-actions:
         patterns:
-          - *
+          - "*"
 
   # Enable updates to the dependencies of our Dockerfile
   - package-ecosystem: docker
