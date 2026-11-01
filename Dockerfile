@@ -1,4 +1,4 @@
-FROM php:8.4.21-cli-alpine3.23@sha256:4f4fc56fe4ba7b7d241c371eda011b27ca4f3b25bf2a37956ee06e966777d696 AS build
+FROM php:8.4.27-cli-alpine3.23@sha256:05aa2edde7c3f828fef15b2508edfbac334dda7e1070de56d86a8b2c40b116a6 AS build
 
 RUN apk add --no-cache ca-certificates curl jo zip unzip
 
@@ -23,7 +23,7 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
         COMPOSER_ALLOW_SUPERUSER=1 \
         composer install --no-cache --no-dev --no-interaction --no-progress
 
-FROM php:8.4.21-cli-alpine3.23@sha256:4f4fc56fe4ba7b7d241c371eda011b27ca4f3b25bf2a37956ee06e966777d696
+FROM php:8.4.27-cli-alpine3.23@sha256:05aa2edde7c3f828fef15b2508edfbac334dda7e1070de56d86a8b2c40b116a6
 
 COPY --from=build /usr/bin/jo /usr/bin/jo
 COPY --from=build /usr/local/lib/php/extensions /usr/local/lib/php/extensions
